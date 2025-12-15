@@ -1,17 +1,14 @@
 import type { Metadata } from "next";
-import { Fraunces, JetBrains_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { WhopAppWrapper } from "./whop-wrapper";
 
-const fraunces = Fraunces({
-	variable: "--font-fraunces",
+// Using Inter as Mona Sans alternative (Swiss Precision kit)
+// Note: Mona Sans is GitHub's proprietary font, not on Google Fonts
+const inter = Inter({
+	variable: "--font-inter",
 	subsets: ["latin"],
-	weight: ["400", "500", "600", "700", "800", "900"],
-});
-
-const jetbrainsMono = JetBrains_Mono({
-	variable: "--font-jetbrains",
-	subsets: ["latin"],
+	weight: ["400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -32,8 +29,8 @@ export default function RootLayout({
 	return (
 		<html lang="en" suppressHydrationWarning>
 		<body
-			className={`${fraunces.variable} ${jetbrainsMono.variable} antialiased`}
-			style={{ fontFamily: "var(--font-fraunces), Georgia, serif" }}
+			className={`${inter.variable} antialiased`}
+			style={{ fontFamily: "var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif" }}
 		>
 				<WhopAppWrapper>{children}</WhopAppWrapper>
 			</body>
