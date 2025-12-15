@@ -1,0 +1,113 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model CompanyConfig {
+  id                     String   @id @default(cuid())
+  companyId              String   @unique // biz_...
+  defaultAppExperienceId String?  // exp_... for notifications
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  courseConfigs CourseConfig[]
+  templates     CertificateTemplate[]
+
+  @@map("company_configs")
+}
+
+model CourseConfig {
+  id         String  @id @default(cuid())
+  companyId  String
+  courseId   String  // cors_...
+  enabled    Boolean @default(false)
+  templateId String?
+
+  company  CompanyConfig        @relation(fields: [companyId], references: [companyId], onDelete: Cascade)
+  template CertificateTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([companyId, courseId])
+  @@map("course_configs")
+}
+
+model CertificateTemplate {
+  id            String  @id @default(cuid())
+  companyId     String
+  name          String
+  logoUrl       String?
+  backgroundUrl String?
+  primaryColor  String  @default("#000000")
+  titleText     String  @default("Certificate of Completion")
+  signatureText String?
+  active        Boolean @default(true)
+
+  company       CompanyConfig  @relation(fields: [companyId], references: [companyId], onDelete: Cascade)
+  courseConfigs CourseConfig[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("certificate_templates")
+}
+
+model CourseCache {
+  id                 String   @id @default(cuid())
+  courseId           String   @unique
+  companyId          String
+  title              String
+  sourceExperienceId String   // where the course lives
+  totalLessonsCount  Int?
+  updatedAt          DateTime @updatedAt
+
+  @@map("course_caches")
+}
+
+model CompletedLesson {
+  id          String   @id @default(cuid())
+  courseId    String
+  userId      String
+  lessonId    String
+  completedAt DateTime @default(now())
+
+  @@unique([courseId, userId, lessonId])
+  @@index([courseId, userId])
+  @@map("completed_lessons")
+}
+
+model IssuedCertificate {
+  id            String    @id @default(cuid())
+  publicId      String    @unique @default(cuid()) // for verification URL
+  companyId     String
+  courseId      String
+  userId        String
+  recipientName String    // snapshot at issue time
+  courseTitle   String    // snapshot at issue time
+  issuerName    String    // company name snapshot
+  issuedAt      DateTime  @default(now())
+  pdfUrl        String?
+  revokedAt     DateTime?
+
+  @@unique([companyId, courseId, userId]) // prevents duplicates
+  @@index([userId])
+  @@index([publicId])
+  @@map("issued_certificates")
+}
+
+model ProcessedWebhook {
+  id           String   @id @default(cuid())
+  webhookMsgId String   @unique // from webhook payload
+  receivedAt   DateTime @default(now())
+
+  @@map("processed_webhooks")
+}
+
