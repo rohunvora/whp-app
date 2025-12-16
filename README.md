@@ -21,6 +21,37 @@
 
 Course creators consistently request automated certificates, but building the webhook → PDF pipeline is complex. This handles the entire flow: webhook processing, template rendering, PDF generation, student delivery, and verification — all automatically.
 
+## Architecture
+
+```mermaid
+flowchart LR
+    subgraph Whop["🎓 Whop"]
+        Course[Course Completed]
+    end
+    
+    subgraph App["⚡ Certified App"]
+        WH[Webhook Handler]
+        Gen[PDF Generator]
+        DB[(PostgreSQL)]
+    end
+    
+    subgraph Delivery["📜 Delivery"]
+        Gallery[Student Gallery]
+        Verify[Public Verify]
+    end
+    
+    Course -->|"webhook"| WH
+    WH --> DB
+    WH --> Gen
+    Gen -->|"Playwright"| PDF[PDF]
+    PDF --> Gallery
+    Gallery --> Verify
+    
+    style Whop fill:#0c0a09,stroke:#f97316,color:#fff
+    style App fill:#0c0a09,stroke:#22d3ee,color:#fff
+    style Delivery fill:#0c0a09,stroke:#4ade80,color:#fff
+```
+
 ## Features
 
 ### For Course Creators
