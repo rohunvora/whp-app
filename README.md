@@ -1,3 +1,8 @@
+<div align="center">
+  <img src="/.github/social-preview.png" alt="whp-app" width="800" />
+  <p><strong>Auto-generates branded completion certificates for Whop course creators when students finish lessons.</strong></p>
+</div>
+
 # Certified — Auto-issue Certificates for Whop Courses
 
 **Automatically generate branded completion certificates when students finish your Whop courses.** Solves the #1 requested feature in Courses app reviews with zero manual work — just connect your webhook and certificates appear instantly when lessons are completed.
